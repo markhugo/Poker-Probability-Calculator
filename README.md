@@ -23,7 +23,7 @@ Input hole cards and community cards to get win probabilities:
 ```bash
 Player 1: ['K♠', 'J♠']
 Player 2: ['Q♣', 'Q♦']
-Community Cards: ['A♠', '10♠', '7♦', '3♥', '2♣']
+Community Cards: ['A♠', '10♠', '7♦', __, __]
 
 Player 1 Win Probability: 62%
 Player 2 Win Probability: 38%
