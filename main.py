@@ -1,24 +1,27 @@
 # main.py
 
 import random
-import utils
+# import utils
+from deck import Deck # import the Deck class from the deck.py file
 
 def main():
-    # Basic Poker Hand Representations
+    # create an instance of Deck
+    deck = Deck() 
 
     # create and shuffle deck of cards
-    deck = utils.create_deck()
-    random.shuffle(deck)
+    deck.create_deck()
+    deck.shuffle()
+    
+    # deal 2 cards (a player's hand) and 3 community flop cards
+    player_hands = deck.deal(2)
+    opponent_hands = deck.deal(2)
+    flop_cards = deck.deal(3)
 
-    # deal 2 cards (a player's hand) and 5 community cards
-    player_hands = deck[:2]
-    opponent_hands = deck[2:4]
-    flop_community_cards = deck[4:7]
-
+    # displays hand
     print("Player's hand: ", player_hands)
     print("Opponent's hand: ", opponent_hands)
-    print("Flop Community cards: ", flop_community_cards)
-
+    print("Community Cards: ", flop_cards)
+    """
     # Evaluate Poker Hand
 
     # evaluate pair (we'll expand hand evaluation later)
@@ -32,42 +35,13 @@ def main():
     if is_pair(player_and_community):
         print("Player has a pair!")
 
-    # Simulating Poker Rounds (Monte Carlo)
-    def simulate_win_probability(player_hand, opponent_hand, flop_community_cards, num_simulations = 1000):
-        player_wins = 0
-        opp_wins = 0
-        for _ in range(num_simulations):
-            # shuffle a new deck and simulate remaining community cards
-            deck = [rank + suit for rank in ranks for suit in suits if rank + suit not in player_hand + opponent_hand + flop_community_cards]
-            random.shuffle(deck)
-            
-            # deal hands to other players (assuming 1 opponent for simplicity; will be expanded later)
-            remaining_community = deck[:3]
-
-            # combine community cards with both hands
-            player_final_hand = player_hand + flop_community_cards + remaining_community
-            opponent_final_hand = opponent_hand + flop_community_cards + remaining_community
-
-            # evaluate both hands (for simplicity, we'll use a basic pair check)
-            player_has_pair = is_pair(player_final_hand)
-            opponent_has_pair = is_pair(opponent_final_hand)
-
-            # simple evaluation: if player has a pair, and opponenet doesn't, count it as a win
-            if player_has_pair and not opponent_has_pair:
-                player_wins += 1
-            if opponent_has_pair and not player_has_pair:
-                opp_wins += 1
-            
-            wins = [player_wins, opp_wins]
-        # calculate win probability
-        win_prob = [win/num_simulations for win in wins]
-        return win_prob
+    # simulate poker rounds (monte-carlo)
 
     # Simulate and print win probability
     wins_prob = simulate_win_probability(player_hands, opponent_hands, flop_community_cards)
 
     print(f"\nPlayer's win probability: {wins_prob[0] * 100:.2f}%")
     print(f"Opponent's win probability: {wins_prob[1] * 100:.2f}%")
-
+"""
 if __name__ == "__main__":
     main()
