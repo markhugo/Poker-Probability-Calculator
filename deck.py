@@ -11,6 +11,11 @@ class Deck:
         suits = ['♠', '♥', '♦', '♣']
         ranks = ['2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K', 'A']
         return [rank + suit for rank in ranks for suit in suits]
+    
+    def create_sim_deck(self, player_hand, opponent_hand, community_cards):
+        suits = ['♠', '♥', '♦', '♣']
+        ranks = ['2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K', 'A']
+        return [rank + suit for rank in ranks for suit in suits if rank + suit not in player_hand + opponent_hand + community_cards]
 
     # get deck of cards
     def show_deck(self):

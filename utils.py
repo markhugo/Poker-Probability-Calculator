@@ -2,47 +2,43 @@
 
 import random
 from deck import Deck
+from hand import Hand
 
 # Simulating Poker Rounds (Monte Carlo)
-def simulate_win_probability(player_hand, opponent_hand, flop_community_cards, num_simulations = 1000):
+def simulate_win_probability(player_hole, opponent_hole, flop_community_cards, num_simulations=1000):
     player_wins = 0
     opp_wins = 0
     for _ in range(num_simulations):
         # shuffle a new deck and simulate remaining community cards
-        deck = [rank + suit for rank in ranks for suit in suits if rank + suit not in player_hand + opponent_hand + flop_community_cards]
-        random.shuffle(deck)
+        sim_deck = Deck()
+        sim_deck.create_sim_deck(player_hole, opponent_hole, flop_community_cards)
+        sim_deck.shuffle()
             
         # deal hands to other players (assuming 1 opponent for simplicity; will be expanded later)
-        remaining_community = deck[:3]
+        remaining_community = sim_deck.deal(2)
 
         # combine community cards with both hands
-        player_final_hand = player_hand + flop_community_cards + remaining_community
-        opponent_final_hand = opponent_hand + flop_community_cards + remaining_community
+        player_final_hand = player_hole + flop_community_cards + remaining_community
+        opponent_final_hand = opponent_hole + flop_community_cards + remaining_community
 
-        # evaluate both hands (for simplicity, we'll use a basic pair check)
-        player_has_pair = is_pair(player_final_hand)
-        opponent_has_pair = is_pair(opponent_final_hand)
+        # create and evaluateeach player's hand
+        player_hand = Hand(player_final_hand)
+        player_rank = player_hand.evaluate()
+        opponent_hand = Hand(opponent_final_hand)
+        opponent_rank = opponent_hand.evaluate()
 
-        # simple evaluation: if player has a pair, and opponenet doesn't, count it as a win
-        if player_has_pair and not opponent_has_pair:
-            player_wins += 1
-        if opponent_has_pair and not player_has_pair:
-            opp_wins += 1
-            
+        # increment each win for player
+        if player_rank.get(list(player_rank)[0]) > opponent_rank.get(list(opponent_rank)[0]):
+            player_wins+=1 
+        else:
+            opp_wins+=1
+        
         wins = [player_wins, opp_wins]
     
     # calculate win probability
-    win_prob = [win/num_simulations for win in wins]
+    win_prob = calc_win_prob(wins, num_simulations)
     return win_prob
 
 # calculates win probability (needs implentation)    
-def calc_win_prob():
-    pass
-
-# evaluate hands (needs implementation)
-def evaluate(hands):
-    scale = 0
-    pass
-
-# convert hand to rankings 
-def convert_rank()
+def calc_win_prob(num_wins, num_simulations):
+    return [win/num_simulations for win in num_wins]

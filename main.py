@@ -1,7 +1,7 @@
 # main.py
 
 import random
-# import utils
+from utils import simulate_win_probability
 from deck import Deck # import the Deck class from the deck.py file
 from hand import Hand # import the Hand class from hand.py file
 
@@ -31,14 +31,12 @@ def main():
     print("You have a " + list(player_hand.evaluate())[0] + "!")
     print("Opponent has a " + list(opponent_hand.evaluate())[0] + "!")
 
-
     # simulate poker rounds (monte-carlo)
-'''
-    # Simulate and print win probability
-    wins_prob = simulate_win_probability(player_hands, opponent_hands, flop_community_cards)
+    wins_prob = simulate_win_probability(player_hole, opponent_hole, flop_cards)
 
+    # print win
     print(f"\nPlayer's win probability: {wins_prob[0] * 100:.2f}%")
     print(f"Opponent's win probability: {wins_prob[1] * 100:.2f}%")
-'''
+
 if __name__ == "__main__":
     main()
