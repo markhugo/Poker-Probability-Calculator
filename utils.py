@@ -1,13 +1,7 @@
 # utils.py
 
 import random
-
-# create deck
-def create_deck():
-
-
-def deal_hands(players, deck):
-    hands = [deck[:2] for player in players]
+from deck import Deck
 
 # Simulating Poker Rounds (Monte Carlo)
 def simulate_win_probability(player_hand, opponent_hand, flop_community_cards, num_simulations = 1000):
@@ -36,6 +30,19 @@ def simulate_win_probability(player_hand, opponent_hand, flop_community_cards, n
             opp_wins += 1
             
         wins = [player_wins, opp_wins]
+    
     # calculate win probability
     win_prob = [win/num_simulations for win in wins]
     return win_prob
+
+# calculates win probability (needs implentation)    
+def calc_win_prob():
+    pass
+
+# evaluate hands (needs implementation)
+def evaluate(hands):
+    scale = 0
+    pass
+
+# convert hand to rankings 
+def convert_rank()

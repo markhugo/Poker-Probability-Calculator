@@ -1,4 +1,5 @@
 # deck.py
+from collections import Counter
 import random
 
 class Deck:
@@ -35,4 +36,5 @@ class Deck:
         self.cards = self.create_deck()
         self.shuffle_deck()
 
-    
+
+
