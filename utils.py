@@ -1,8 +1,8 @@
 # utils.py
 
 import random
-from deck import Deck
-from hand import Hand
+from src.players import Dealer
+from src.hand import Hand
 
 # Simulating Poker Rounds (Monte Carlo)
 def simulate_win_probability(player_hole, opponent_hole, flop_community_cards, num_simulations=1000):

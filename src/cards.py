@@ -1,27 +1,50 @@
-# hand.py
+# cards.py
 
 from collections import Counter
-from card import Card
 
+# Card class
+class Card:
+    # initiallize a card with a rank and suit
+    def __init__(self, rank, suit):
+        self.rank = rank
+        self.suit = suit
+
+    # return a readable string representation of the card
+    def __str__(self):
+        return f"{self.rank}{self.suit}"
+
+    # return the official string representation of the card
+    def __repr__(self):
+        return f"Card('{self.rank}', '{self.suit}')"
+
+    # allow cards to be used in sets or as dictionary keys
+    def __hash__(self):
+        return hash((self.rank), (self.suit))
+
+
+# Hand class
 class Hand:
     def __init__(self):
         """Initialize an empty hand."""
-        self.cards = []
+        self.hand = []
 
-    def add_card(self, card):
+    def add(self, card):
         """Add a card to the hand."""
-        self.cards.append(card)
+        self.hand.append(card)
+
+    def show(self):
+        return [str(card) for card in self.hand]
 
     def evaluate(self):
         """Evaluate the strength of the best possible 5-card hand from up to 7 cards."""
-        if len(self.cards) < 5:
-            return "Not enough cards to evaluate."
+        #if len(self.hand) < 5:
+        #   return "Not enough cards to evaluate."
 
         best_hand = None
         best_hand_rank = None
         # Evaluate all combinations of 5 cards out of up to 7 cards
         from itertools import combinations
-        for hand_combination in combinations(self.cards, 5):
+        for hand_combination in combinations(self.hand, 5):
             hand_rank = self.rank_hand(hand_combination)
             if best_hand_rank is None or hand_rank > best_hand_rank:
                 best_hand_rank = hand_rank
@@ -41,11 +64,11 @@ class Hand:
 
         # Hand ranking logic
         if is_flush and is_straight:
-            return 8 if sorted_ranks[0] == 14 and sorted_ranks[-1] == 10 else 5  # Straight Flush
+            return 8 if sorted_ranks[0] == 14 and sorted_ranks[-1] == 10 else 7  # Straight Flush or Royal Flush
         if rank_counts_values[0] == 4:
-            return 7  # Four of a Kind
+            return 6  # Four of a Kind
         if rank_counts_values[0] == 3 and rank_counts_values[1] == 2:
-            return 6  # Full House
+            return 5  # Full House
         if is_flush:
             return 4  # Flush
         if is_straight:
@@ -64,9 +87,6 @@ class Hand:
         if len(ranks) < 5:
             return False
         rank_set = set(ranks)
-        # Check for ace-low straight
-        if set([2, 3, 4, 5, 14]) == rank_set:
-            return True
         return len(rank_set) == 5 and max(rank_set) - min(rank_set) == 4
 
     def rank_to_int(self, rank):
@@ -84,10 +104,10 @@ class Hand:
     def hand_rank_to_string(self, rank):
         """Convert rank value to a hand strength string."""
         ranks = {
-            8: "Straight Flush",
-            7: "Four of a Kind",
-            6: "Full House",
-            5: "Flush",
+            8: "Royal Flush",
+            7: "Straight Flush",
+            6: "Four of a Kind",
+            5: "Full House",
             4: "Flush",
             3: "Straight",
             2: "Three of a Kind",
