@@ -2,34 +2,23 @@
 
 import random
 from utils import simulate_win_probability
-from deck import Deck # import the Deck class from the deck.py file
-from hand import Hand # import the Hand class from hand.py file
+from game import Player
+from game import Game
 
 def main():
-    # create an instance of Deck
-    deck = Deck() 
+    # Example usage
+    game = Game(['Alice', 'Bob'])
+    game.start_game()
 
-    # create and shuffle deck of cards
-    deck.create_deck()
-    deck.shuffle()
-    
-    # deal 2 hole cards (player and opponent) and 3 community cards (the flop)
-    player_hole = deck.deal(2)
-    opponent_hole = deck.deal(2)
-    flop_cards = deck.deal(3)
+    # Print community cards
+    print("Community Cards:")
+    for card in game.community_cards:
+        print(card)
 
-    # displays hand
-    print("Player's hole cards: ", player_hole)
-    print("Opponent's hole cards: ", opponent_hole)
-    print("Community Cards: ", flop_cards)
-    
-    # create each player's hand
-    player_hand = Hand(player_hole + flop_cards)
-    opponent_hand = Hand(opponent_hole + flop_cards)
-
-    # evaluate each player's hand
-    print("You have a " + list(player_hand.evaluate())[0] + "!")
-    print("Opponent has a " + list(opponent_hand.evaluate())[0] + "!")
+    # Print hands evaluation
+    print("\nPlayer Hands Evaluation:")
+    for player, hand in game.evaluate_hands().items():
+        print(f"{player}: {hand}")
 
     # simulate poker rounds (monte-carlo)
     wins_prob = simulate_win_probability(player_hole, opponent_hole, flop_cards)

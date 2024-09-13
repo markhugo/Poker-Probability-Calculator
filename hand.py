@@ -1,69 +1,98 @@
 # hand.py
 
 from collections import Counter
-
-rank_order = {'1': 1,'2': 2, '3': 3, '4': 4, '5': 5, '6': 6, '7': 7, '8': 8, '9': 9, 'T': 10, 'J': 11, 'Q': 12, 'K': 13, 'A': 14}
+from card import Card
 
 class Hand:
-    def __init__(self, cards):
-        # Store the hand
-        self.cards = cards
-        
-        # Sort cards by rank for easier evaluation
-        self.sorted_by_rank = sorted(cards, key=lambda card: rank_order[card[0]])
-        self.ranks = [card[0] for card in self.sorted_by_rank]
-        self.suits = [card[1] for card in self.sorted_by_rank]
-        self.rank_counts = Counter(self.ranks)
-    
-    # evaluate all hands
+    def __init__(self):
+        """Initialize an empty hand."""
+        self.cards = []
+
+    def add_card(self, card):
+        """Add a card to the hand."""
+        self.cards.append(card)
+
     def evaluate(self):
-        if self.is_flush() and self.is_straight():
-            if self.ranks[-1] == 'A':
-                return {"Royal Flush": 10}
-            return {"Straight Flush": 9}
-        elif self.is_four_of_a_kind():
-            return {"Four of a Kind": 8}
-        elif self.is_full_house():
-            return {"Full House": 7}
-        elif self.is_flush():
-            return {"Flush": 6}
-        elif self.is_straight():
-            return {"Straight": 5}
-        elif self.is_three_of_a_kind():
-            return {"Three of a Kind": 4}
-        elif self.is_two_pair():
-            return {"Two Pair": 3}
-        elif self.is_one_pair():
-            return {"One Pair": 2}
-        else:
-            return {"High Card": 1}
+        """Evaluate the strength of the best possible 5-card hand from up to 7 cards."""
+        if len(self.cards) < 5:
+            return "Not enough cards to evaluate."
 
+        best_hand = None
+        best_hand_rank = None
+        # Evaluate all combinations of 5 cards out of up to 7 cards
+        from itertools import combinations
+        for hand_combination in combinations(self.cards, 5):
+            hand_rank = self.rank_hand(hand_combination)
+            if best_hand_rank is None or hand_rank > best_hand_rank:
+                best_hand_rank = hand_rank
+                best_hand = hand_combination
 
-    # helper methods for evaluating hands
-    def is_flush(self):
-        return len(set(self.suits)) == 1
+        return self.hand_rank_to_string(best_hand_rank)
 
-    def is_straight(self):
-        rank_values = [rank_order[rank] for rank in self.ranks]
-        return rank_values == list(range(rank_values[0], rank_values[0] + 5))
+    def rank_hand(self, hand):
+        """Rank the given 5-card hand and return a rank value."""
+        rank_counts = Counter(card.rank for card in hand)
+        suit_counts = Counter(card.suit for card in hand)
+        sorted_ranks = sorted(set(self.rank_to_int(card.rank) for card in hand), reverse=True)
 
-    def is_four_of_a_kind(self):
-        return 4 in self.rank_counts.values()
+        is_flush = len(suit_counts) == 1
+        is_straight = self.is_straight(sorted_ranks)
+        rank_counts_values = sorted(rank_counts.values(), reverse=True)
 
-    def is_full_house(self):
-        return 3 in self.rank_counts.values() and 2 in self.rank_counts.values()
+        # Hand ranking logic
+        if is_flush and is_straight:
+            return 8 if sorted_ranks[0] == 14 and sorted_ranks[-1] == 10 else 5  # Straight Flush
+        if rank_counts_values[0] == 4:
+            return 7  # Four of a Kind
+        if rank_counts_values[0] == 3 and rank_counts_values[1] == 2:
+            return 6  # Full House
+        if is_flush:
+            return 4  # Flush
+        if is_straight:
+            return 3  # Straight
+        if rank_counts_values[0] == 3:
+            return 2  # Three of a Kind
+        if rank_counts_values[0] == 2 and rank_counts_values[1] == 2:
+            return 1  # Two Pair
+        if rank_counts_values[0] == 2:
+            return 0  # One Pair
 
-    def is_three_of_a_kind(self):
-        return 3 in self.rank_counts.values()
+        return -1  # High Card
 
-    def is_two_pair(self):
-        return list(self.rank_counts.values()).count(2) == 2
+    def is_straight(self, ranks):
+        """Check if the hand is a straight."""
+        if len(ranks) < 5:
+            return False
+        rank_set = set(ranks)
+        # Check for ace-low straight
+        if set([2, 3, 4, 5, 14]) == rank_set:
+            return True
+        return len(rank_set) == 5 and max(rank_set) - min(rank_set) == 4
 
-    def is_one_pair(self):
-        return 2 in self.rank_counts.values()
+    def rank_to_int(self, rank):
+        """Convert rank to integer value for comparison."""
+        if rank == 'A':
+            return 14
+        if rank == 'K':
+            return 13
+        if rank == 'Q':
+            return 12
+        if rank == 'J':
+            return 11
+        return int(rank)
 
-    def high_card(self):
-        return max(self.cards, key=lambda card: rank_order[card[0]])
-
-    def __repr__(self):
-        return f"Hand({self.cards})"
+    def hand_rank_to_string(self, rank):
+        """Convert rank value to a hand strength string."""
+        ranks = {
+            8: "Straight Flush",
+            7: "Four of a Kind",
+            6: "Full House",
+            5: "Flush",
+            4: "Flush",
+            3: "Straight",
+            2: "Three of a Kind",
+            1: "Two Pair",
+            0: "One Pair",
+            -1: "High Card"
+        }
+        return ranks.get(rank, "Unknown Hand")
