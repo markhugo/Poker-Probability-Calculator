@@ -1,20 +1,10 @@
 # deck.py
-import random
-from cards import Card, Hand
+from cards import Card, Deck, Hand
 
 class Dealer:
     # initialize the deck with 52 cards (4 suits, 13 ranks)
-    def __init__(self):
-        suits = ['♠', '♥', '♦', '♣']
-        ranks = ['2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K', 'A']
-        self.deck = [Card(rank, suit) for suit in suits for rank in ranks]
-
-    """
-    def create_sim_deck(self, player_hand, opponent_hand, community_cards):
-        suits = ['♠', '♥', '♦', '♣']
-        ranks = ['2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K', 'A']
-        return [rank + suit for rank in ranks for suit in suits if rank + suit not in player_hand + opponent_hand + community_cards]
-    """
+    def __init__(self, deck):
+        self.deck = deck
 
     # get deck of cards
     def show_deck(self):
@@ -26,11 +16,17 @@ class Dealer:
 
     # shuffles the deck
     def shuffle(self):
-        random.shuffle(self.deck)
+        self.deck.shuffle()
     
     # deals a specified number of cards from deck
-    def deal(self):
-        return self.deck.pop() if self.deck else None
+    def deal_to_players(self, players, num_cards=2):
+        for player in players:
+            player.hole_cards = [self.deck.deal() for _ in range(num_cards)]
+
+    def deal_community_cards(self, flop=3):
+        # for the flop
+        return [self.deck.deal() for _ in range(flop)]
+        
 
     # resets the deck to a full 52 cards and shuffles it
     def reset(self):
@@ -42,11 +38,11 @@ class Player:
     # initialize player
     def __init__(self, name):
         self.name = name
-        self.hole_cards = Hand()
+        self.hole_cards = []
 
     # mutator method
     def receives(self, card):
-        self.hole_cards.add(card)
+        self.hole_cards.append(card)
 
     # accessor method
     def show_cards(self):

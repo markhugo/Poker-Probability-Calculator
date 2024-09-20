@@ -13,7 +13,7 @@ def main():
         player.show_cards()
     
     # Print community cards
-    print("Community Cards:", game.community_cards)
+    print("Community Cards:", str(game.community_cards))
 
     #
     # Print hands evaluation

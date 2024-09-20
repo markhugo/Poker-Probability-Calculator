@@ -13,6 +13,9 @@ class Card:
     def __str__(self):
         return f"{self.rank}{self.suit}"
 
+    def get_str(self):
+        return str(self)
+        
     # return the official string representation of the card
     def __repr__(self):
         return f"Card('{self.rank}', '{self.suit}')"
@@ -21,12 +24,31 @@ class Card:
     def __hash__(self):
         return hash((self.rank), (self.suit))
 
+# Deck class
+class Deck:
+    def __init__(self):
+        self.cards = self.create_deck()
+
+    def create_deck(self):
+        suits = ['♠', '♥', '♦', '♣']
+        ranks = [2, 3, 4, 5, 6, 7, 8, 9, 10, 'J', 'Q', 'K', 'A']
+        return [Card(rank, suit) for suit in suits for rank in ranks]
+
+    def shuffle(self):
+        import random
+        random.shuffle(self.cards)
+
+    def deal(self):
+        return self.cards.pop() if self.cards else None
 
 # Hand class
 class Hand:
     def __init__(self):
         """Initialize an empty hand."""
         self.hand = []
+    
+    def list(self):
+        return [repr(card) for card in self.hand]
 
     def add(self, card):
         """Add a card to the hand."""
